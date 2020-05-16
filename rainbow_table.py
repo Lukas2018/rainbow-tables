@@ -6,14 +6,14 @@ from passlib.hash import des_crypt
 class RainbowTable:
     def __init__(self):
         self.n = 2
-        self.chains = 200
+        self.chains = 0
         self.chain_length = 200
         self.password_length = 8
         self.table = {}
         self.alphabet = string.ascii_letters + string.digits
         self.crack = None
-        self.table_file = None
-        self.plaintext_file = None
+        self.table_seeded = False
+        self.data_seeded = 0
 
     def set_num_process(self, n):
         self.n = n
@@ -34,17 +34,24 @@ class RainbowTable:
         return len(self.table)
 
     def load_table(self, filename):
-        self.table_file = filename
-        return 0
+        self.table_seeded = True
+        with open(filename) as f:
+            lines = f.readlines()
+            i = 0
+            for line in lines:
+                data = line.split(":")
+                self.table[data[0]] = {
+                    data[1]: int(data[2])
+                }
+                i = i + 1
+        self.data_seeded = i
 
-    def load_plaintexts(self, filename):
-        self.plaintext_file = filename
+    def load_plain_texts(self, filename):
         with open(filename) as f:
             data = f.read()
             data_splitted = data.split(";")
             for plaintext in data_splitted:
                 self.table[plaintext] = 0
-        self.chains = len(self.table)
 
     def load_alphabet(self, filename):
         with open(filename) as f:
@@ -53,10 +60,20 @@ class RainbowTable:
     def set_crack(self, crack):
         self.crack = crack
 
+    def get_crack(self):
+        return self.crack
+
+    def is_table_seeded(self):
+        return self.table_seeded
+
     def check_consistence_data(self):
         if self.crack is not None:
             if not self.table:
                 print("Niepodano tablicy do poszukiwania hasza")
+                return False
+        else:
+            if (len(self.table) == 0 and self.chains == 0) or (len(self.table) == self.data_seeded):
+                print("Niepodano liczby łańcuchów ani pliku z tekstami jawnymi")
                 return False
 
     def print_data(self):
@@ -64,16 +81,16 @@ class RainbowTable:
             print("Tablica tęczowa załadowana")
             print("Poszukiwania cracka dla hasha: " + self.crack)
         else:
-            if self.table_file is not None:
+            if self.table_seeded is True:
                 print("Tablica tęczowa załadowana")
+            print("Ilość łańcuchów do wygenerowania: " + str(self.chains))
             print("Teksty jawne utworzone/zapisane")
-            print("Ilość łańcuchów: " + str(self.chains))
             print("Długość łańcucha: " + str(self.chain_length))
             print("Długość poszukiwanych haseł: " + str(self.password_length))
             print("Tworzenie tablicy tęczowej na zbiorze znaków: " + self.alphabet)
         print("Liczba pracujących procesów: " + str(self.n))
 
-    def generate_plaintexts(self):
+    def generate_plain_texts(self):
         for x in range(self.chains):
             plaintext = ''.join(random.choice(self.alphabet) for _ in range(self.password_length))
             while plaintext in self.table:

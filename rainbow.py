@@ -14,9 +14,9 @@ if __name__ == "__main__":
         if argument.startswith("-rainbow_file="):
             rainbow_file = argument[14:]
             rainbow_table.load_table(rainbow_file)
-        if argument.startswith("-plaintexts_file="):
-            plaintexts_file = argument[17:]
-            rainbow_table.load_plaintexts(plaintexts_file)
+        if argument.startswith("-plain_texts_file="):
+            plain_texts_file = argument[18:]
+            rainbow_table.load_plain_texts(plain_texts_file)
         if argument.startswith("-chains="):
             chains = int(argument[8:])
             rainbow_table.set_chains(chains)
@@ -35,9 +35,16 @@ if __name__ == "__main__":
     if rainbow_table.check_consistence_data() is False:
         exit(0)
     rainbow_table.print_data()
-    size = rainbow_table.get_table_size()
-    chains = rainbow_table.get_chains()
-    if chains != size:
-        rainbow_table.generate_plaintexts()
-    rainbow_table.print_table()
+    if rainbow_table.get_crack() is not None:
+        print()
+    else:
+        size = rainbow_table.get_table_size()
+        chains = rainbow_table.get_chains()
+        if chains != size:
+            rainbow_table.generate_plain_texts()
+        else:
+            if rainbow_table.is_table_seeded():
+                rainbow_table.generate_plain_texts()
+        rainbow_table.print_table()
+        print(str(rainbow_table.get_table_size()))
 
