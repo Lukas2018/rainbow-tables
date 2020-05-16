@@ -35,4 +35,9 @@ if __name__ == "__main__":
     if rainbow_table.check_consistence_data() is False:
         exit(0)
     rainbow_table.print_data()
+    size = rainbow_table.get_table_size()
+    chains = rainbow_table.get_chains()
+    if chains != size:
+        rainbow_table.generate_plaintexts()
+    rainbow_table.print_table()
 
