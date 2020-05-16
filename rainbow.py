@@ -46,5 +46,5 @@ if __name__ == "__main__":
             if rainbow_table.is_table_seeded():
                 rainbow_table.generate_plain_texts()
         rainbow_table.print_table()
-        print(str(rainbow_table.get_table_size()))
+        rainbow_table.export_rainbow_table()
 
