@@ -36,12 +36,12 @@ class RainbowTable:
     def load_table(self, filename):
         self.table_seeded = True
         with open(filename, "r") as f:
-            lines = f.readlines()
+            lines = f.read().splitlines()
             i = 0
             for line in lines:
                 data = line.split(":")
-                self.table[data[0]] = {
-                    data[1]: int(data[2])
+                self.table[i] = {
+                    data[0]: data[1]
                 }
                 i = i + 1
         self.data_seeded = i
@@ -51,7 +51,10 @@ class RainbowTable:
             data = f.read()
             data_splitted = data.split(";")
             for plaintext in data_splitted:
-                self.table[plaintext] = 0
+                size = len(self.table)
+                self.table[size] = {
+                    plaintext: str(0)
+                }
 
     def load_alphabet(self, filename):
         with open(filename, "r") as f:
@@ -72,7 +75,10 @@ class RainbowTable:
                 print("Niepodano tablicy do poszukiwania hasza")
                 return False
         else:
-            if (len(self.table) == 0 and self.chains == 0) or (self.is_table_seeded() and len(self.table) == self.data_seeded):
+            if len(self.table) == 0 and self.chains == 0:
+                print("Niepodano liczby łańcuchów ani pliku z tekstami jawnymi")
+                return False
+            if self.chains == 0 and self.is_table_seeded() and len(self.table) == self.data_seeded:
                 print("Niepodano liczby łańcuchów ani pliku z tekstami jawnymi")
                 return False
 
@@ -95,12 +101,15 @@ class RainbowTable:
             plaintext = ''.join(random.choice(self.alphabet) for _ in range(self.password_length))
             while plaintext in self.table:
                 plaintext = ''.join(random.choice(self.alphabet) for _ in range(self.password_length))
-            self.table[plaintext] = {0:0}
+            size = len(self.table)
+            self.table[size] = {
+                plaintext: str(0)
+            }
 
     def print_table(self):
         for key, value in self.table.items():
-            for hash, i in value.items():
-                print(key + ":" + str(hash) + ":" + str(i))
+            for plaintext, hash in value.items():
+                print(str(key) + ":" + str(plaintext) + ":" + str(hash))
 
     def crack_hash(self, hash):
         return 0
@@ -111,8 +120,8 @@ class RainbowTable:
 
     def export_rainbow_table(self):
         with open("rainbow_result.txt", "w") as f:
-            for plaintext, value in self.table.items():
-                for hash, iterations in value.items():
-                    f.write(plaintext + ":" + str(hash) + ":" + str(iterations) + "\n")
+            for key, value in self.table.items():
+                for plaintext, hash in value.items():
+                    f.write(str(plaintext) + ":" + str(hash) + "\n")
 
 
