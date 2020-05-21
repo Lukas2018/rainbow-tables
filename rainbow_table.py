@@ -5,7 +5,7 @@ from passlib.hash import des_crypt
 
 class RainbowTable:
     def __init__(self):
-        self.n = 2
+        self.n = 1
         self.chains = 0
         self.chain_length = 200
         self.password_length = 8
@@ -17,6 +17,9 @@ class RainbowTable:
 
     def set_num_process(self, n):
         self.n = n
+
+    def get_num_process(self):
+        return self.n
 
     def set_chains(self, chains):
         self.chains = chains
@@ -111,12 +114,51 @@ class RainbowTable:
             for plaintext, hash in value.items():
                 print(str(key) + ":" + str(plaintext) + ":" + str(hash))
 
-    def crack_hash(self, hash):
-        return 0
+    @staticmethod
+    def reduce(hash, length):
+        return hash[0:length]
 
     @staticmethod
     def hash(plaintext):
         return des_crypt.hash(plaintext)
+
+    def create_chains(self, id_start, id_end):
+        for chain in range(id_start, id_end):
+            rainbow_chain = self.table[chain]
+            rainbow_plaintext = list(rainbow_chain.keys())[0]
+            plaintext = rainbow_plaintext
+            for chain_element in range(self.chain_length):
+                hash = self.hash(plaintext)
+                plaintext = self.reduce(hash, self.password_length)
+            self.table[chain] = {
+                rainbow_plaintext: hash
+            }
+
+    def crack_hash(self, hash, id_start, id_end):
+        i = 0
+        """temp_hash = hash
+        temp_plain = self.reduce(hash)
+        while i < (id_end - id_start):
+
+            for x in range(id_start, id_end):
+                rainbow_chain = self.table[x]
+                rainbow_begin_plaintext = rainbow_chain.keys()[0]
+                rainbow_ended_hash = rainbow_chain.values()[0]
+                if hash == rainbow_ended_hash:
+                    guess_hash = hash
+                    new_plaintext = rainbow_begin_plaintext
+                    while guess_hash != rainbow_ended_hash:
+                        guess_hash = self.hash(new_plaintext)
+                        if guess_hash == hash:
+                            self.crack = new_plaintext
+                            break
+                        new_plaintext = self.reduce(guess_hash)
+                rainbow_begin_plaintext = self.reduce(hash)
+
+"""
+        return 0
+
+
 
     def export_rainbow_table(self):
         with open("rainbow_result.txt", "w") as f:

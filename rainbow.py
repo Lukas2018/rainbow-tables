@@ -1,9 +1,10 @@
 import sys
-
 from rainbow_table import RainbowTable
 
 rainbow_table = RainbowTable()
-if __name__ == "__main__":
+indexes = []
+
+def load_input_arguments():
     for argument in sys.argv:
         if argument.startswith("-help"):
             #print helpa
@@ -32,11 +33,27 @@ if __name__ == "__main__":
         if argument.startswith("-crack="):
             crack = argument[7:]
             rainbow_table.set_crack(crack)
+
+
+def divide_indexes_range(vector_size, n):
+    global indexes
+    indexes = [0] * (n + 1)
+    indexes[0] = 0
+    rang = int(vector_size / n)
+    for i in range(1, n):
+        indexes[i] = i * rang
+    indexes[n] = vector_size
+
+
+if __name__ == "__main__":
+    load_input_arguments()
     if rainbow_table.check_consistence_data() is False:
         exit(0)
     rainbow_table.print_data()
     if rainbow_table.get_crack() is not None:
-        print()
+        n = rainbow_table.get_num_process()
+        divide_indexes_range(100, n)
+        print("Tekst jawny do szukanego hasha to: " + rainbow_table.get_crack())
     else:
         size = rainbow_table.get_table_size()
         chains = rainbow_table.get_chains()
@@ -46,5 +63,8 @@ if __name__ == "__main__":
             if rainbow_table.is_table_seeded():
                 rainbow_table.generate_plain_texts()
         rainbow_table.print_table()
+        n = rainbow_table.get_num_process()
+        divide_indexes_range(100, n)
+        rainbow_table.create_chains(indexes[0], indexes[1])
         rainbow_table.export_rainbow_table()
 
