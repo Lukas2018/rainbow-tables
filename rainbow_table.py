@@ -72,6 +72,9 @@ class RainbowTable:
     def is_table_seeded(self):
         return self.table_seeded
 
+    def get_data_seeded(self):
+        return self.data_seeded
+
     def check_consistence_data(self):
         if self.crack is not None:
             if not self.table:
@@ -87,11 +90,11 @@ class RainbowTable:
 
     def print_data(self):
         if self.crack is not None:
-            print("Tablica tęczowa załadowana")
+            print("Tablica tęczowa załadowana z pliku")
             print("Poszukiwania cracka dla hasha: " + self.crack)
         else:
             if self.table_seeded is True:
-                print("Tablica tęczowa załadowana")
+                print("Tablica tęczowa załadowana z pliku")
             print("Ilość łańcuchów do wygenerowania: " + str(self.chains))
             print("Teksty jawne utworzone/zapisane")
             print("Długość łańcucha: " + str(self.chain_length))
@@ -139,29 +142,8 @@ class RainbowTable:
         }
         return result
 
-    def crack_hash(self, hash, id_start, id_end):
+    def crack_hash(self, hash, table_id):
         i = 0
-        """temp_hash = hash
-        temp_plain = self.reduce(hash)
-        while i < (id_end - id_start):
-
-            for x in range(id_start, id_end):
-                rainbow_chain = self.table[x]
-                rainbow_begin_plaintext = rainbow_chain.keys()[0]
-                rainbow_ended_hash = rainbow_chain.values()[0]
-                if hash == rainbow_ended_hash:
-                    guess_hash = hash
-                    new_plaintext = rainbow_begin_plaintext
-                    while guess_hash != rainbow_ended_hash:
-                        guess_hash = self.hash(new_plaintext)
-                        if guess_hash == hash:
-                            self.crack = new_plaintext
-                            break
-                        new_plaintext = self.reduce(guess_hash)
-                rainbow_begin_plaintext = self.reduce(hash)
-
-"""
-        return 0
 
     def export_rainbow_table(self):
         with open("rainbow_result.txt", "w") as f:
