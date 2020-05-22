@@ -1,4 +1,8 @@
 import sys
+from concurrent.futures.process import ProcessPoolExecutor
+from multiprocessing import Process
+from multiprocessing.pool import Pool
+
 from rainbow_table import RainbowTable
 
 rainbow_table = RainbowTable()
@@ -62,9 +66,12 @@ if __name__ == "__main__":
         else:
             if rainbow_table.is_table_seeded():
                 rainbow_table.generate_plain_texts()
-        rainbow_table.print_table()
         n = rainbow_table.get_num_process()
-        divide_indexes_range(100, n)
-        rainbow_table.create_chains(indexes[0], indexes[1])
+        results = None
+        with ProcessPoolExecutor(max_workers=n) as executor:
+            results = executor.map(rainbow_table.create_chain, range(100))
+        for result in results:
+            rainbow_table.modify_table(result)
         rainbow_table.export_rainbow_table()
+        print("Tablica zapisana do pliku wynikowego")
 

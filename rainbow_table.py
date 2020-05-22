@@ -122,17 +122,22 @@ class RainbowTable:
     def hash(plaintext):
         return des_crypt.hash(plaintext)
 
-    def create_chains(self, id_start, id_end):
-        for chain in range(id_start, id_end):
-            rainbow_chain = self.table[chain]
-            rainbow_plaintext = list(rainbow_chain.keys())[0]
-            plaintext = rainbow_plaintext
-            for chain_element in range(self.chain_length):
-                hash = self.hash(plaintext)
-                plaintext = self.reduce(hash, self.password_length)
-            self.table[chain] = {
+    def modify_table(self, value):
+        self.table[list(value.keys())[0]] = list(value.values())[0]
+
+    def create_chain(self, table_id):
+        rainbow_chain = self.table[table_id]
+        rainbow_plaintext = list(rainbow_chain.keys())[0]
+        plaintext = rainbow_plaintext
+        for chain_element in range(self.chain_length):
+            hash = self.hash(plaintext)
+            plaintext = self.reduce(hash, len(plaintext))
+        result = {
+            table_id: {
                 rainbow_plaintext: hash
             }
+        }
+        return result
 
     def crack_hash(self, hash, id_start, id_end):
         i = 0
@@ -158,12 +163,8 @@ class RainbowTable:
 """
         return 0
 
-
-
     def export_rainbow_table(self):
         with open("rainbow_result.txt", "w") as f:
             for key, value in self.table.items():
                 for plaintext, hash in value.items():
                     f.write(str(plaintext) + ":" + str(hash) + "\n")
-
-
