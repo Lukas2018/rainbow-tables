@@ -122,7 +122,7 @@ class RainbowTable:
 
     @staticmethod
     def reduce(hash, length):
-        return hash[0:length]
+        return hash[2:2 + length]
 
     @staticmethod
     def hash(plaintext):
@@ -130,6 +130,9 @@ class RainbowTable:
 
     def modify_table(self, value):
         self.table[list(value.keys())[0]] = list(value.values())[0]
+
+    def get_plain_text(self, table_id):
+        return list(self.table[table_id].keys())[0]
 
     def create_chain(self, table_id):
         rainbow_chain = self.table[table_id]

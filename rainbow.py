@@ -41,6 +41,7 @@ def load_input_arguments():
 
 
 if __name__ == "__main__":
+    print(rainbow_table.hash("6qeeg1"))
     load_input_arguments()
     if rainbow_table.check_consistence_data() is False:
         exit(0)
@@ -49,20 +50,28 @@ if __name__ == "__main__":
         n = rainbow_table.get_num_process()
         size = rainbow_table.get_table_size()
         started_hash = rainbow_table.get_crack()
-        hash = started_hash
+        hash = []
+        length = []
+        for x in range(size):
+            hash.append(started_hash)
+            length.append(len(rainbow_table.get_plain_text(x)))
         i = 0
         while i < 3:
             with ProcessPoolExecutor(max_workers=n) as executor:
-                results = executor.map(rainbow_table.crack_hash_chain, repeat(hash), range(size)) # coś się tu pierdoli
+                results = executor.map(rainbow_table.crack_hash_chain, hash, range(size)) # coś się tu pierdoli
             for result in results:
                 if result is not None:
                     rainbow_table.crack_hash(result, started_hash)
                     executor.shutdown()
                     i = size
                     break
-            plain = rainbow_table.reduce(hash, 8) # length na sztywno
-            hash = rainbow_table.hash(plain)
-        print("Tekst jawny do szukanego hasha to: " + str(rainbow_table.get_crack()))
+            for x in range(size):
+                plain = rainbow_table.reduce(hash[x], length[x]) # length na sztywno
+                hash[x] = rainbow_table.hash(plain)
+        if rainbow_table.get_crack() != started_hash:
+            print("Tekst jawny do szukanego hasha to: " + str(rainbow_table.get_crack()))
+        else:
+            print("Nie znaleziono tekstu jawnego dla podanego hasza")
     else:
         size = rainbow_table.get_table_size()
         chains = rainbow_table.get_chains()
