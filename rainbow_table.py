@@ -30,6 +30,14 @@ class RainbowTable:
     def set_chain_length(self, chain_length):
         self.chain_length = chain_length
 
+    def get_max_chain_length(self):
+        max_length = 0
+        for key, value in self.table.items():
+            length = int(list(value.values())[1])
+            if length > max_length:
+                max_length = length
+        return max_length
+
     def set_password_length(self, password_length):
         self.password_length = password_length
 
@@ -43,8 +51,12 @@ class RainbowTable:
             i = 0
             for line in lines:
                 data = line.split(":")
+                length = data[1].split("-")
+                print(data[1])
+                print(length)
                 self.table[i] = {
-                    data[0]: data[1]
+                    data[0]: length[0].strip(),
+                    "length": length[1].strip()
                 }
                 i = i + 1
         self.data_seeded = i
@@ -59,7 +71,8 @@ class RainbowTable:
                     continue
                 size = len(self.table)
                 self.table[size] = {
-                    plaintext: str(0)
+                    plaintext: str(0),
+                    "length": str(0)
                 }
 
     def load_alphabet(self, filename):
@@ -112,13 +125,9 @@ class RainbowTable:
                 plaintext = ''.join(random.choice(self.alphabet) for _ in range(self.password_length))
             size = len(self.table)
             self.table[size] = {
-                plaintext: str(0)
+                plaintext: str(0),
+                "chain-length": str(0)
             }
-
-    def print_table(self):
-        for key, value in self.table.items():
-            for plaintext, hash in value.items():
-                print(str(key) + ":" + str(plaintext) + ":" + str(hash))
 
     @staticmethod
     def reduce(hash, length):
@@ -143,7 +152,8 @@ class RainbowTable:
             plaintext = self.reduce(hash, len(plaintext))
         result = {
             table_id: {
-                rainbow_plaintext: hash
+                rainbow_plaintext: hash,
+                "length": self.chain_length
             }
         }
         return result
@@ -169,5 +179,7 @@ class RainbowTable:
     def export_rainbow_table(self):
         with open("rainbow_result.txt", "w") as f:
             for key, value in self.table.items():
-                for plaintext, hash in value.items():
-                    f.write(str(plaintext) + ":" + str(hash) + "\n")
+                plaintext = list(value.keys())[0]
+                hash = list(value.values())[0]
+                length = list(value.values())[1]
+                f.write(str(plaintext) + ":" + str(hash) + " - " + str(length) + "\n")
