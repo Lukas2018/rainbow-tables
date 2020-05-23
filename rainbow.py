@@ -1,5 +1,6 @@
 import sys
 from concurrent.futures.process import ProcessPoolExecutor
+from itertools import repeat
 
 from rainbow_table import RainbowTable
 
@@ -47,17 +48,18 @@ if __name__ == "__main__":
     if rainbow_table.get_crack() is not None:
         n = rainbow_table.get_num_process()
         size = rainbow_table.get_table_size()
+        started_hash = rainbow_table.get_crack()
+        hash = started_hash
         i = 0
-        while i < size:
+        while i < 3:
             with ProcessPoolExecutor(max_workers=n) as executor:
-                results = executor.map(rainbow_table.crack, hash, range(size)) # coś się tu pierdoli
-                print(type(results))
-                for result in results:
-                    if result is not None:
-                        rainbow_table.set_crack(result)
-                        executor.shutdown()
-                        i = size
-                        break
+                results = executor.map(rainbow_table.crack_hash_chain, repeat(hash), range(size)) # coś się tu pierdoli
+            for result in results:
+                if result is not None:
+                    rainbow_table.crack_hash(result, started_hash)
+                    executor.shutdown()
+                    i = size
+                    break
             plain = rainbow_table.reduce(hash, 8) # length na sztywno
             hash = rainbow_table.hash(plain)
         print("Tekst jawny do szukanego hasha to: " + str(rainbow_table.get_crack()))

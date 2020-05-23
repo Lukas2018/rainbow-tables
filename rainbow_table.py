@@ -52,8 +52,11 @@ class RainbowTable:
     def load_plain_texts(self, filename):
         with open(filename, "r") as f:
             data = f.read()
+            data = data.replace("\n", "")
             data_splitted = data.split(";")
             for plaintext in data_splitted:
+                if len(plaintext) == 0:
+                    continue
                 size = len(self.table)
                 self.table[size] = {
                     plaintext: str(0)
@@ -123,7 +126,7 @@ class RainbowTable:
 
     @staticmethod
     def hash(plaintext):
-        return des_crypt.hash(plaintext)
+        return des_crypt.hash(plaintext, salt="AB")
 
     def modify_table(self, value):
         self.table[list(value.keys())[0]] = list(value.values())[0]
@@ -142,15 +145,23 @@ class RainbowTable:
         }
         return result
 
-    def crack_hash(self, hash, table_id):
-        i = 0
-        print("dupa")
+    def crack_hash_chain(self, hash, table_id):
         rainbow_chain = self.table[table_id]
-        rainbow_plaintext = list(rainbow_chain.keys())[0]
         rainbow_hash = list(rainbow_chain.values())[0]
         if hash == rainbow_hash:
-            return rainbow_plaintext
+            return table_id
         return None
+
+    def crack_hash(self, table_id, hash):
+        chain = self.table[table_id]
+        plain = list(chain.keys())[0]
+        temp_hash = self.hash(plain)
+        while True:
+            if temp_hash == hash:
+                self.set_crack(plain)
+                break
+            plain = self.reduce(temp_hash, len(plain))
+            temp_hash = self.hash(plain)
 
     def export_rainbow_table(self):
         with open("rainbow_result.txt", "w") as f:
