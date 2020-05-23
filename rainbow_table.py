@@ -144,6 +144,13 @@ class RainbowTable:
 
     def crack_hash(self, hash, table_id):
         i = 0
+        print("dupa")
+        rainbow_chain = self.table[table_id]
+        rainbow_plaintext = list(rainbow_chain.keys())[0]
+        rainbow_hash = list(rainbow_chain.values())[0]
+        if hash == rainbow_hash:
+            return rainbow_plaintext
+        return None
 
     def export_rainbow_table(self):
         with open("rainbow_result.txt", "w") as f:
