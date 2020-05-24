@@ -121,7 +121,7 @@ class RainbowTable:
     def generate_plain_texts(self):
         for x in range(self.chains):
             plaintext = ''.join(random.choice(self.alphabet) for _ in range(self.password_length))
-            while plaintext in self.table:
+            while self.check_plaintext_exist(plaintext) is False:
                 plaintext = ''.join(random.choice(self.alphabet) for _ in range(self.password_length))
             size = len(self.table)
             self.table[size] = {
@@ -137,10 +137,18 @@ class RainbowTable:
     def hash(plaintext):
         return des_crypt.hash(plaintext, salt="AB")
 
+    def check_plaintext_exist(self, plaintext):
+        for x in range(len(self.table)):
+            chain = self.table[x]
+            plain = list(chain.keys())[0]
+            if chain == plain:
+                return False
+        return True
+
     def modify_table(self, value):
         self.table[list(value.keys())[0]] = list(value.values())[0]
 
-    def get_plain_text(self, table_id):
+    def get_plaintext(self, table_id):
         return list(self.table[table_id].keys())[0]
 
     def create_chain(self, table_id):
