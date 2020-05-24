@@ -14,8 +14,21 @@ def load_input_arguments():
             rainbow_table.load_table(rainbow_file)
     for argument in sys.argv:
         if argument.startswith("-help"):
-            #print helpa
-            break
+            print("Jeśli chcesz crackować hasza masz opcję podania następujących parametrów:")
+            print("-crack=hasz - hasz do crackowania")
+            print("-n=liczba - liczba pracujących procesów")
+            print("-rainbow_file=plik - plik z tablicą tęczową")
+            print("")
+            print("Jeśli chcesz utworzyć tablicę tęczową masz opcję podania następujących argumentów:")
+            print("-chains=liczba - ilość łańcuchów w tablicy do wygenerowania")
+            print("-plain_texts_file=plik - plik z tekstami jawnymi do tablicy")
+            print("-chain_length=liczba - głębokość łańcucha (ilość haszy i redukcji)")
+            print("-password_length=liczba - długość generowanych haseł")
+            print("-alphabet_file=plik - plik z alfabetem")
+            print("-n=liczba - liczba pracujących procesów")
+            print("-rainbow_file=plik - plik z tablicą tęczową, nowe łańcuchy będą do niego dopisane")
+            print("Argument ilości łańcuchów jest wymagany jeśli nie podano pliku z tekstami jawnymi")
+            exit(0)
         elif argument.startswith("-n="):
             n = int(argument[3:])
             rainbow_table.set_num_process(n)

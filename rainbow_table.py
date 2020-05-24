@@ -98,10 +98,10 @@ class RainbowTable:
                 return False
         else:
             if len(self.table) == 0 and self.chains == 0:
-                print("Niepodano liczby łańcuchów ani pliku z tekstami jawnymi")
+                print("Nie podano liczby łańcuchów ani pliku z tekstami jawnymi")
                 return False
             if self.chains == 0 and self.is_table_seeded() and len(self.table) == self.data_seeded:
-                print("Niepodano liczby łańcuchów ani pliku z tekstami jawnymi")
+                print("Nie podano liczby łańcuchów ani pliku z tekstami jawnymi")
                 return False
 
     def print_data(self):
