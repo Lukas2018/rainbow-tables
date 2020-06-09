@@ -52,8 +52,6 @@ class RainbowTable:
             for line in lines:
                 data = line.split(":")
                 length = data[1].split("-")
-                print(data[1])
-                print(length)
                 self.table[i] = {
                     data[0]: length[0].strip(),
                     "length": length[1].strip()

@@ -65,11 +65,11 @@ if __name__ == "__main__":
         length = []
         for x in range(size):
             hash.append(started_hash)
-            length.append(len(rainbow_table.get_plain_text(x)))
+            length.append(len(rainbow_table.get_plaintext(x)))
         i = 0
         while i < rainbow_table.get_max_chain_length():
             with ProcessPoolExecutor(max_workers=n) as executor:
-                results = executor.map(rainbow_table.crack_hash_chain, hash, range(size)) # coś się tu pierdoli
+                results = executor.map(rainbow_table.crack_hash_chain, hash, range(size))
             for result in results:
                 if result is not None:
                     rainbow_table.crack_hash(result, started_hash)
@@ -77,7 +77,7 @@ if __name__ == "__main__":
                     i = size
                     break
             for x in range(size):
-                plain = rainbow_table.reduce(hash[x], length[x]) # length na sztywno
+                plain = rainbow_table.reduce(hash[x], length[x])
                 hash[x] = rainbow_table.hash(plain)
             i = i + 1
         if rainbow_table.get_crack() != started_hash:
