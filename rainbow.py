@@ -1,4 +1,5 @@
 import sys
+import datetime
 from concurrent.futures.process import ProcessPoolExecutor
 
 from rainbow_table import RainbowTable
@@ -53,10 +54,12 @@ def load_input_arguments():
 
 
 if __name__ == "__main__":
+    dateStart = datetime.datetime.now()
     load_input_arguments()
     if rainbow_table.check_consistence_data() is False:
         exit(0)
     rainbow_table.print_data()
+    print("czas wczytywania: " + str(datetime.datetime.now()-dateStart))
     if rainbow_table.get_crack() is not None:
         n = rainbow_table.get_num_process()
         size = rainbow_table.get_table_size()
@@ -101,4 +104,5 @@ if __name__ == "__main__":
             rainbow_table.modify_table(result)
         rainbow_table.export_rainbow_table()
         print("Tablica zapisana do pliku wynikowego")
+        print("czas działania całego programu: " + str(datetime.datetime.now()-dateStart))
 
